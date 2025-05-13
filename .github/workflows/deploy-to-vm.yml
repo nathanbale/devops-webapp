@@ -1,0 +1,31 @@
+name: Deploy to Azure VM via SSH
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 74.179.85.117 >> ~/.ssh/known_hosts
+
+    - name: Deploy code to Azure VM
+      run: |
+        scp -r . nathanbale@74.179.85.117:/home/nathanbale/devops-webapp
+        ssh nathanbale@74.179.85.117 << 'EOF'
+          cd devops-webapp
+          docker build -t devops-webapp .
+          docker stop webapp || true && docker rm webapp || true
+          docker run -d --name webapp -p 80:5000 devops-webapp
+        EOF
