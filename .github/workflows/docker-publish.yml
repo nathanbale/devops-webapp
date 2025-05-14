@@ -32,17 +32,17 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/devops-webapp:latest
 
-     - name: Deploy app to Azure VM
-  run: |
-    ssh -i ~/.ssh/id_rsa nathanbale@74.179.85.117 << 'EOF'
-      # Stop and remove any container using port 80
-      container_id=$(docker ps --filter "publish=80" --format "{{.ID}}")
-      if [ -n "$container_id" ]; then
-        docker stop $container_id
-        docker rm $container_id
-      fi
+      - name: Deploy app to Azure VM
+        run: |
+          ssh -i ~/.ssh/id_rsa nathanbale@74.179.85.117 << 'EOF'
+            # Stop and remove any container using port 80
+            container_id=$(docker ps --filter "publish=80" --format "{{.ID}}")
+            if [ -n "$container_id" ]; then
+              docker stop $container_id
+              docker rm $container_id
+            fi
 
-      # Pull and run the new container
-      docker pull ${{ secrets.DOCKER_USERNAME }}/devops-webapp:latest
-      docker run -d --name webapp -p 80:5000 ${{ secrets.DOCKER_USERNAME }}/devops-webapp:latest
-    EOF
+            # Pull and run the new container
+            docker pull ${{ secrets.DOCKER_USERNAME }}/devops-webapp:latest
+            docker run -d --name webapp -p 80:5000 ${{ secrets.DOCKER_USERNAME }}/devops-webapp:latest
+          EOF
