@@ -35,11 +35,11 @@ jobs:
       - name: Deploy app to Azure VM
         run: |
           ssh -i ~/.ssh/id_rsa nathanbale@74.179.85.117 << 'EOF'
-            # Stop and remove any container using port 80
-            container_id=$(docker ps --filter "publish=80" --format "{{.ID}}")
+            # Stop and remove container named "webapp" if it exists (running or not)
+            container_id=$(docker ps -a --filter "name=webapp" --format "{{.ID}}")
             if [ -n "$container_id" ]; then
-              docker stop $container_id
-              docker rm $container_id
+              docker stop $container_id || true
+              docker rm $container_id || true
             fi
 
             # Pull and run the new container
