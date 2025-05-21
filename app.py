@@ -1,10 +1,18 @@
-from flask import Flask 
+from flask import Flask
+from datetime import datetime
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Hello, DevOps world! If you see this, your CI/CD works!"
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return f"Hello, DevOps world! If you see this, your CI/CD works! Current time: {now}"
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+
+
+
+
+
+
