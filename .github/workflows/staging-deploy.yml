@@ -23,7 +23,7 @@ jobs:
 
       - name: Deploy to Staging VM
         run: |
-          ssh -o StrictHostKeyChecking=no -i staging_key.pem azureuser@52.233.84.200 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i staging_key.pem azureuser@${{ secrets.STAGING_VM_HOST }} << 'EOF'
             docker stop webapp-staging || true
             docker rm webapp-staging || true
             docker pull nathanbale/devops-webapp:latest
