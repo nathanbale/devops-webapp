@@ -16,16 +16,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up SSH key
-        run: |
-          echo "${{ secrets.STAGING_SSH_KEY }}" > staging_key.pem
-          chmod 600 staging_key.pem
-
-      - name: Deploy to Staging VM
-        run: |
-          ssh -o StrictHostKeyChecking=no -i staging_key.pem azureuser@${{ secrets.STAGING_VM_HOST }} << 'EOF'
+      - name: Deploy to Staging VM via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: azureuser
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: 22
+          script: |
             docker stop webapp-staging || true
             docker rm webapp-staging || true
             docker pull nathanbale/devops-webapp:latest
             docker run -d -p 8080:5000 --name webapp-staging nathanbale/devops-webapp:latest
-          EOF
