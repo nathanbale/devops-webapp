@@ -26,20 +26,20 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging .
           docker push ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging
 
-      - name: SSH into staging server and deploy container
+      - name: SSH into staging server and deploy
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.STAGING_USER }}
           key: ${{ secrets.STAGING_SSH_KEY }}
           script: |
-            # Create .env file with secret key on staging VM
-            cat > ~/devops-webapp/.env << EOL
-SECRET_KEY=${{ secrets.STAGING_SECRET_KEY }}
-# Add other environment variables here as needed
-EOL
-
             docker stop webapp-staging || true
             docker rm webapp-staging || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging
-            docker run -d -p 8080:5000 --name webapp-staging --env-file ~/devops-webapp/.env ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging
+
+            # Set up .env file
+            echo "FLASK_ENV=staging" > .env
+            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+
+            # Run container with environment variables
+            docker run -d --env-file .env -p 8080:5000 --name webapp-staging ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging
