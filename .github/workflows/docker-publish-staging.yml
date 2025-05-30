@@ -32,6 +32,7 @@ jobs:
           host: ${{ secrets.STAGING_HOST }}
           username: ${{ secrets.STAGING_USER }}
           key: ${{ secrets.STAGING_SSH_KEY }}
+          debug: true
           script: |
             docker stop webapp-staging || true
             docker rm webapp-staging || true
