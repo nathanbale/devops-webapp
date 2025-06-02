@@ -1,0 +1,103 @@
+1. Project Goal / Scope
+You have a Flask web app.
+
+You want to deploy it with Docker containers to Azure VMs (production + staging).
+
+Use CI/CD pipelines with GitHub Actions.
+
+Manage environment variables (e.g., .env files).
+
+Secure deployments with SSH keys.
+
+Automate Docker container lifecycle on VMs via CI/CD.
+
+Possibly extend with tests, multiple environments, and secrets management.
+
+2. What you’ve done so far
+Built the Flask app and Dockerized it.
+
+Created GitHub Actions workflows for:
+
+Building Docker images.
+
+Pushing images to Docker Hub.
+
+Deploying containers to Azure VMs via SSH.
+
+Set up staging VM and production VM.
+
+Handled SSH key issues (you can now SSH successfully).
+
+Created .env files for environment variables on the VMs.
+
+Pushed Docker images tagged for staging and production.
+
+Fixed YAML workflow syntax errors.
+
+Updated VM users and SSH keys via Azure CLI.
+
+3. What is currently working
+Docker images build & push from GitHub Actions.
+
+Deployment to staging VM using the SSH action.
+
+SSH key authentication is fixed.
+
+Basic .env file setup on the VM during deploy.
+
+Docker container runs on staging VM with staging image.
+
+4. What is missing or needs improvement
+Production deployment workflow — is this set up and tested similarly?
+
+Environment variable secrets — right now, you have a blank SECRET_KEY= in .env. You should:
+
+Store secrets safely (GitHub Secrets).
+
+Inject them into the .env or as env vars during deploy.
+
+Automated testing before deployment.
+
+Rollback strategy if deployment fails.
+
+Staging vs production config separation — maybe different ports, different Docker images, etc.
+
+Monitoring/logging for your running containers.
+
+HTTPS support for your app (currently, you expose HTTP).
+
+Scaling — is your app meant for multiple replicas or single VM?
+
+Code cleanup and docs — to make it maintainable.
+
+5. Suggested next steps
+Verify or create production deployment workflow
+Mirror what you did for staging, but for production VM/image.
+
+Secure secrets management
+
+Add SECRET_KEY and any other secrets as GitHub Secrets.
+
+Modify workflow to inject them during deploy.
+
+Add automated tests
+
+Add a step in GitHub Actions to run Flask tests before build/push.
+
+Improve .env handling
+
+Either use GitHub Secrets + echo into .env file on VM.
+
+Or use Docker secrets if moving to swarm or k8s later.
+
+Add HTTPS support
+
+Use a reverse proxy (like Nginx) + Let's Encrypt on your VM.
+
+Add logs & monitoring
+
+You could use Docker logs, or set up something like Prometheus + Grafana.
+
+Write README and docs
+
+Document how to deploy, how secrets are managed, how to SSH, etc.
