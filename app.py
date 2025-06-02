@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return f"Hello, prduction:* environment! CI/CD is working!!! Current time: {now}"
+    return f"Hello,Nathan! This is prduction:* environment! CI/CD is working!!! Current time: {now}"
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
