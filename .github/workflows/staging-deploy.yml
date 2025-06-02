@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - staging
-    paths:
-      - '**'
-      - '!**/production-deploy.yml'
 
 jobs:
   deploy:
@@ -20,11 +17,15 @@ jobs:
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.STAGING_HOST }}
-          username: azureuser
+          username: ${{ secrets.STAGING_USERNAME }}
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: 22
           script: |
             docker stop webapp-staging || true
             docker rm webapp-staging || true
-            docker pull nathanbale/devops-webapp:latest
-            docker run -d -p 8080:5000 --name webapp-staging nathanbale/devops-webapp:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging
+
+            echo "FLASK_ENV=staging" > .env
+            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+
+            docker run -d --env-file .env -p 8080:5000 --name webapp-staging ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging

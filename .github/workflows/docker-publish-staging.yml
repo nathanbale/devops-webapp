@@ -1,4 +1,4 @@
-name: Deploy to Staging
+name: Build and Push Docker Image (Staging)
 
 on:
   push:
@@ -6,17 +6,12 @@ on:
       - staging
 
 jobs:
-  deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -25,22 +20,3 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging .
           docker push ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging
-
-      - name: SSH into staging server and deploy
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USERNAME }}
-          key: ${{ secrets.STAGING_SSH_KEY }}
-          debug: true
-          script: |
-            docker stop webapp-staging || true
-            docker rm webapp-staging || true
-            docker pull ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging
-
-            # Set up .env file
-            echo "FLASK_ENV=staging" > .env
-            echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-
-            # Run container with environment variables
-            docker run -d --env-file .env -p 8080:5000 --name webapp-staging ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging
