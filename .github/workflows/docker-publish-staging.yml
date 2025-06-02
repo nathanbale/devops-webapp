@@ -20,3 +20,13 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging .
           docker push ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging
+    
+
+
+#Checkout code
+
+#Set up Python
+
+#Docker login
+
+#Docker build and push to Docker Hub

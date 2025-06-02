@@ -29,3 +29,16 @@ jobs:
             echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
 
             docker run -d --env-file .env -p 8080:5000 --name webapp-staging ${{ secrets.DOCKER_USERNAME }}/devops-webapp:staging
+ 
+
+#Checkout code
+
+#SSH into staging VM
+
+#Stop and remove existing container (if any)
+
+#Pull latest Docker image from Docker Hub
+
+#Create a .env file
+
+#Run the app with environment variables
